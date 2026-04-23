@@ -1,0 +1,63 @@
+## Build output
+bin/
+obj/
+Debug/
+Release/
+
+## Architecture folders
+x64/
+x86/
+ARM/
+ARM64/
+
+## Logs
+*.log
+logs/
+Log/
+Logs/
+
+## User-specific / IDE files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+## VS Code
+.vscode/
+
+## JetBrains Rider (optional)
+.idea/
+
+## NuGet
+*.nupkg
+*.snupkg
+
+## Test / Coverage
+TestResults/
+CodeCoverage/
+*.VisualState.xml
+TestResult.xml
+nunit-*.xml
+
+## EF / local db artifacts (if ever used)
+*.db
+*.db-shm
+*.db-wal
+
+## Environment / secrets
+.env
+appsettings.Development.json
+
+## OS junk
+.DS_Store
+Thumbs.db
+
+## Temporary files
+~$*
+*~
+
+## MSBuild logs
+*.binlog
+
+## Scaffolding
+ScaffoldingReadMe.txt
