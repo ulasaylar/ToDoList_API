@@ -1,6 +1,10 @@
 using Scalar.AspNetCore;
 using Api.Data;
 using Microsoft.EntityFrameworkCore;
+using Api.Services.Interfaces;
+using Api.Services;
+using FluentValidation;
+using Api.Validation;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -8,6 +12,8 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<ApiContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
+builder.Services.AddScoped<ITaskService, TaskService>();
+builder.Services.AddValidatorsFromAssemblyContaining<TaskValidator>();
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 

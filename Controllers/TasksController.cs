@@ -1,39 +1,42 @@
+using Api.Data;
+using Microsoft.AspNetCore.Mvc;
+using Api.Services.Interfaces;
+using FluentValidation;
+
+
 namespace Api.Controllers
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using Api.Data;
-    using Api.Models;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Mvc.ApiExplorer;
-    using Microsoft.Extensions.Logging;
-
     [ApiController]
     [Route("api/[controller]")]
     public class TasksController : ControllerBase
     {
-        private readonly ApiContext _context;
+        private readonly ITaskService _service;
+        private readonly IValidator<CreateTaskRequest> _validator;
 
-        public TasksController(ApiContext context)
+        public TasksController(ITaskService service, IValidator<CreateTaskRequest> validator)
         {
-            _context = context;
+            _service = service;
+            _validator = validator;
         }
 
-        [HttpPost]
+        [HttpPost("create")]
         public IActionResult CreateTask(CreateTaskRequest task)
         {
-            var toDoTask = new ToDoTask
+            var validationResult = _validator.Validate(task);
+            if (!validationResult.IsValid)
             {
-                Name = task.Name,
-                Priority = task.Priority,
-                ExpireDate = task.ExpireDate
-            };
+                return BadRequest(validationResult.Errors.Select(e => e.ErrorMessage));
+            }
 
-            _context.ToDoTasks.Add(toDoTask);
-            _context.SaveChanges();
-            return Ok(toDoTask);
+            var result = _service.CreateTask(task);
+            return Ok(result);
+        }
+
+        [HttpGet("all")]
+        public async Task<IActionResult> GetAllTasks()
+        {
+            var tasks = await _service.GetAllTasks();
+            return Ok(tasks);
         }
     }
 }
