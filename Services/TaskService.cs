@@ -16,7 +16,7 @@ public class TaskService : ITaskService
     {
         return await _context.ToDoTasks.ToListAsync();
     }
-    public ToDoTask CreateTask(CreateTaskRequest request)
+    public async Task<ToDoTask> CreateTask(CreateTaskRequest request)
     {
         var task = new ToDoTask
         {
@@ -26,7 +26,7 @@ public class TaskService : ITaskService
         };
 
         _context.ToDoTasks.Add(task);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
 
         return task;
     }

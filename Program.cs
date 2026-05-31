@@ -13,6 +13,7 @@ builder.Services.AddDbContext<ApiContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
 builder.Services.AddScoped<ITaskService, TaskService>();
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddValidatorsFromAssemblyContaining<TaskValidator>();
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
