@@ -27,12 +27,12 @@ public class UserService : IUserService
         bool usernameExists = await _context.Users.AnyAsync(x => x.Username == request.Username);
 
         if (usernameExists)
-            throw new Exception("Username already exists.");
+            throw new Exception("Kullanıcı adı zaten kullanılıyor.");
 
         bool emailExists = await _context.Users.AnyAsync(x => x.Email == request.Email);
 
         if (emailExists)
-            throw new Exception("Email already exists.");
+            throw new Exception("E-posta zaten kullanılıyor.");
 
         var user = new User
         {
@@ -55,12 +55,12 @@ public class UserService : IUserService
                 x.Email == request.UsernameOrEmail);
 
         if (user == null)
-            throw new Exception("User not found.");
+            throw new Exception("Kullanıcı bulunamadı.");
 
         bool passwordValid = BCrypt.Net.BCrypt.Verify(request.Password, user.Password);
 
         if (!passwordValid)
-            throw new Exception("Invalid password.");
+            throw new Exception("Geçersiz bilgiler.");
 
         var token = GenerateToken(user);
 
