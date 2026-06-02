@@ -43,4 +43,22 @@ public class UserService : IUserService
 
         return user;
     }
+
+    public async Task<User> LoginAsync(LoginRequest request)
+    {
+        var user = await _context.Users
+            .FirstOrDefaultAsync(x =>
+                x.Username == request.UsernameOrEmail ||
+                x.Email == request.UsernameOrEmail);
+
+        if (user == null)
+            throw new Exception("User not found.");
+
+        bool passwordValid = BCrypt.Net.BCrypt.Verify(request.Password, user.Password);
+
+        if (!passwordValid)
+            throw new Exception("Invalid password.");
+
+        return user;
+    }
 }
