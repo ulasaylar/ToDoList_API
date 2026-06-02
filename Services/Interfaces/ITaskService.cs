@@ -4,7 +4,7 @@ namespace Api.Services.Interfaces
 {
     public interface ITaskService
     {
-        Task<ToDoTask> CreateTask(CreateTaskRequest task);
-        Task<List<ToDoTask>> GetAllTasks();
+        Task<ToDoTask> CreateTask(CreateTaskRequest task, int userId);
+        Task<List<ToDoTask>> GetAllTasks(int userId);
     }
 }

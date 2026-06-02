@@ -5,24 +5,43 @@ using Api.Services.Interfaces;
 using Api.Services;
 using FluentValidation;
 using Api.Validation;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-// Add services to the container.
+
 builder.Services.AddDbContext<ApiContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
 builder.Services.AddScoped<ITaskService, TaskService>();
 builder.Services.AddScoped<IUserService, UserService>();
+
 builder.Services.AddValidatorsFromAssemblyContaining<TaskValidator>();
-builder.Services.AddValidatorsFromAssemblyContaining<LoginValidator>();
-builder.Services.AddValidatorsFromAssemblyContaining<CreateUserValidator>();
+
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)
+            )
+        };
+    });
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
@@ -30,7 +49,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

@@ -62,13 +62,11 @@ public class UsersController : ControllerBase
                 return BadRequest(validationResult.Errors.Select(e => e.ErrorMessage));
             }
 
-            var user = await _userService.LoginAsync(request);
+            var result = await _userService.LoginAsync(request);
 
             return Ok(new
             {
-                user.Id,
-                user.Username,
-                user.Email
+                token = result.Token
             });
         }
         catch (Exception ex)

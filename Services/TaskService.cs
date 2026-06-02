@@ -12,17 +12,18 @@ public class TaskService : ITaskService
         _context = context;
     }
 
-    public async Task<List<ToDoTask>> GetAllTasks()
+    public async Task<List<ToDoTask>> GetAllTasks(int userId)
     {
-        return await _context.ToDoTasks.ToListAsync();
+        return await _context.ToDoTasks.Where(x => x.UserId == userId).ToListAsync();
     }
-    public async Task<ToDoTask> CreateTask(CreateTaskRequest request)
+    public async Task<ToDoTask> CreateTask(CreateTaskRequest request, int userId)
     {
         var task = new ToDoTask
         {
             Name = request.Name,
             Priority = request.Priority,
-            ExpireDate = request.ExpireDate
+            ExpireDate = request.ExpireDate,
+            UserId = userId
         };
 
         _context.ToDoTasks.Add(task);
