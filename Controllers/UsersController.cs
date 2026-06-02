@@ -1,6 +1,7 @@
 using Api.DTOs;
 using Api.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using FluentValidation;
 
 namespace Api.Controllers;
 
@@ -9,10 +10,17 @@ namespace Api.Controllers;
 public class UsersController : ControllerBase
 {
     private readonly IUserService _userService;
+    private readonly IValidator<CreateUserRequest> _validator;
+    private readonly IValidator<LoginRequest> _loginValidator;
 
-    public UsersController(IUserService userService)
+    public UsersController(
+    IUserService userService,
+    IValidator<CreateUserRequest> createUserValidator,
+    IValidator<LoginRequest> loginValidator)
     {
         _userService = userService;
+        _validator = createUserValidator;
+        _loginValidator = loginValidator;
     }
 
     [HttpPost("create")]
@@ -20,6 +28,13 @@ public class UsersController : ControllerBase
     {
         try
         {
+            var validationResult = await _validator.ValidateAsync(request);
+
+            if (!validationResult.IsValid)
+            {
+                return BadRequest(validationResult.Errors.Select(e => e.ErrorMessage));
+            }
+
             var user = await _userService.CreateUserAsync(request);
 
             return Created("", new
@@ -40,6 +55,13 @@ public class UsersController : ControllerBase
     {
         try
         {
+            var validationResult = await _loginValidator.ValidateAsync(request);
+
+            if (!validationResult.IsValid)
+            {
+                return BadRequest(validationResult.Errors.Select(e => e.ErrorMessage));
+            }
+
             var user = await _userService.LoginAsync(request);
 
             return Ok(new

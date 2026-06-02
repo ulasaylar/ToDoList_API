@@ -15,6 +15,8 @@ builder.Services.AddDbContext<ApiContext>(options =>
 builder.Services.AddScoped<ITaskService, TaskService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddValidatorsFromAssemblyContaining<TaskValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<LoginValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<CreateUserValidator>();
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
