@@ -23,6 +23,16 @@ public class TasksController : ControllerBase
         _validator = validator;
     }
 
+    [HttpGet("all")]
+    public async Task<IActionResult> GetAllTasks()
+    {
+        var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+
+        var tasks = await _service.GetAllTasks(userId);
+
+        return Ok(tasks);
+    }
+
     [HttpPost("create")]
     public async Task<IActionResult> CreateTask([FromBody] CreateTaskRequest task)
     {
@@ -40,13 +50,23 @@ public class TasksController : ControllerBase
         return Ok(result);
     }
 
-    [HttpGet("all")]
-    public async Task<IActionResult> GetAllTasks()
+    [HttpPut("{id}/toggle")]
+    public async Task<IActionResult> ToggleTask(int id)
     {
         var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
 
-        var tasks = await _service.GetAllTasks(userId);
+        await _service.ToggleTask(id, userId);
 
-        return Ok(tasks);
+        return Ok(new { message = "Task toggled" });
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteTask(int id)
+    {
+        var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+
+        await _service.DeleteTask(id, userId);
+
+        return Ok(new { message = "Task deleted" });
     }
 }
